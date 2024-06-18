@@ -1,0 +1,87 @@
+spring:
+  profiles:
+    active: local
+#    active : dev
+
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: local
+  application:
+    name: myweb
+  datasource:
+    url: jdbc:mysql://13.209.75.109:3306/web
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        #       show_sql: true # System.out ?? ??
+        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
+    database: mysql
+  thymeleaf:
+    prefix: classpath:templates/
+    suffix: .html
+    cache: false
+    check-template-location: true
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug # logger ?? ??
+        orm:
+          jdbc:
+            bind: trace
+
+
+---
+
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+  application:
+    name: myweb
+  datasource:
+    url: jdbc:mysql://13.209.75.109:3306/web
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        #       show_sql: true # System.out ?? ??
+        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
+    database: mysql
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug # logger ?? ??
+        orm:
+          jdbc:
+            bind: trace
+
+server:
+  ssl:
+    key-store-password: 094609
+    key-store: classpath:keystore.p12
+    key-store-type: PKCS12
+
