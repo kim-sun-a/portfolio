@@ -1,7 +1,14 @@
+buildscript {
+    ext {
+        jooqVersion = '3.19.5'
+    }
+}
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.0'
     id 'io.spring.dependency-management' version '1.1.5'
+    id 'nu.studer.jooq' version '9.0'
 }
 
 group = 'suna'
@@ -24,7 +31,12 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    //implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation ('org.springframework.boot:spring-boot-starter-jooq') {
+        exclude group: 'org.jooq:jooq'
+    }
+
+    implementation "org.jooq:jooq:${jooqVersion}"
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
@@ -32,8 +44,66 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    jooqGenerator 'com.mysql:mysql-connector-j'
+    jooqGenerator "org.jooq:jooq:${jooqVersion}"
+    jooqGenerator "org.jooq:jooq-meta:${jooqVersion}"
+
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+
+String dbUser   = System.properties["db-user"]   ?: "root"
+String dbPasswd = System.properties["db-passwd"] ?: "12341234"
+
+jooq {
+    version = "${jooqVersion}"
+
+    configurations {
+        mywebDB {
+            generationTool {
+                jdbc {
+                    driver = 'com.mysql.cj.jdbc.Driver'
+                    url = 'jdbc:mysql://13.209.75.109:3306/web'
+                    user = "${dbUser}"
+                    password = "${dbPasswd}"
+                }
+
+                generator {
+                    name = 'org.jooq.codegen.DefaultGenerator'
+                    database {
+                        name = 'org.jooq.meta.mysql.MySQLDatabase'
+
+                        schemata {
+                            schema {
+                                inputSchema = 'web'
+                            }
+                        }
+                    }
+                    generate {
+                        daos = true
+                        records = true
+                        fluentSetters = true
+                        javaTimeTypes = true
+                        deprecated = false
+                    }
+
+                    target {
+                        directory = 'src/generated'
+                    }
+                }
+            }
+        }
+    }
+
+    sourceSets {
+        main {
+            java {
+                srcDirs = ["src/main/java", "src/generated"]
+            }
+        }
+    }
 }
