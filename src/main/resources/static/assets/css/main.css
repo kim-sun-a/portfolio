@@ -1548,6 +1548,10 @@ input, select, textarea {
 			}
 
 		}
+	a {
+		text-decoration: underline;
+		color: #777777;
+	}
 
 /* Image */
 
