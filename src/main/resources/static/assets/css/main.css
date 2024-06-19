@@ -1549,6 +1549,7 @@ input, select, textarea {
 
 		}
 	a {
+		font-weight: bold;
 		text-decoration: underline;
 		color: #777777;
 	}
